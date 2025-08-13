@@ -1,0 +1,13 @@
+{
+  "SSH_HOST": "",
+  "SSH_USER": "ec2-user",
+  "SSH_PRIVATE_KEY_PATH": "~/keys/efs-staging.pem",
+  "DB_HOST": "",
+  "DB_PORT": 3306,
+  "DB_USER": "",
+  "DB_PASSWORD": "",
+  "DB_NAME": "",
+  "LOCAL_PORT": 3306,
+  "SECRETS_MANAGER_SECRET_NAME": "tool/rds-tunnel-staging",
+  "AWS_REGION": "us-east-1"
+}

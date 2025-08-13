@@ -1,0 +1,69 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# macOS files
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# System files
+Thumbs.db
+Desktop.ini
+
+# dotenv files
+.env.local
+.env.*.local
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*.bak
+*.orig
+*.old
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
