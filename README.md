@@ -38,7 +38,7 @@ To run `rds-tunnel` locally, follow these steps:
 
 1.  **Clone the Repository (if applicable)**:
     ```bash
-    git clone [https://github.com/sbekx/rds-tunnel.git](https://github.com/sbekx/rds-tunnel.git) 
+    git clone https://github.com/sbekx/rds-tunnel.git
     cd rds-tunnel
     ```
 
