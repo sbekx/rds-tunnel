@@ -36,7 +36,7 @@ jobs:
         id: get_version # This step needs an ID to reference its outputs
         run: |
           # Read the base version from pyproject.toml (e.g., '1.0.0')
-          VERSION=$(uv version)
+          VERSION=$(uv version --short)
           #$(python -c "import toml; print(toml.load('pyproject.toml')['tool']['poetry']['version'])")
           # Set the output for this step. Use GITHUB_OUTPUT for step outputs.
           # The key 'package_version' here will be accessible as steps.get_version.outputs.package_version
