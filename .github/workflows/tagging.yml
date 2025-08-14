@@ -10,8 +10,6 @@ on:
 jobs:
   get_tag_version:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     # Define outputs for this job that can be consumed by other jobs
     outputs:
       package_version: ${{ steps.get_version.outputs.package_version }}
@@ -47,6 +45,8 @@ jobs:
 
   gh_tag_version:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     # This job now correctly depends on 'get_tag_version' to ensure it runs afterwards
     needs: get_tag_version
     steps:
