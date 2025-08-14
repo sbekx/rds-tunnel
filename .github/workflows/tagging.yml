@@ -68,27 +68,27 @@ jobs:
           if [[ "$CURRENT_BRANCH" == "dev" ]]; then
             # Logic for 'dev' branch: append 'dev' and an incrementing number (e.g., 1.0.0-dev1)
             # Find the latest tag matching the current PACKAGE_VERSION + "-dev*"
-            LATEST_DEV=$(git tag -l "${PACKAGE_VERSION}dev*" | sort -V | tail -n 1)
+            LATEST_DEV=$(git tag -l "${PACKAGE_VERSION}-dev*" | sort -V | tail -n 1)
             if [[ -z "$LATEST_DEV" ]]; then
               # If no existing dev tag, start with dev1
-              NEW_TAG="${PACKAGE_VERSION}dev1"
+              NEW_TAG="${PACKAGE_VERSION}-dev1"
             else
               # Extract the number from the latest dev tag and increment it
               DEV_NUMBER=$(echo "$LATEST_DEV" | grep -oE '[0-9]+$')
-              NEW_TAG="${PACKAGE_VERSION}dev$((DEV_NUMBER + 1))"
+              NEW_TAG="${PACKAGE_VERSION}-dev$((DEV_NUMBER + 1))"
             fi
             echo "Determined tag for 'dev' branch: $NEW_TAG"
           elif [[ "$CURRENT_BRANCH" == "release" ]]; then
             # Logic for 'release' branch: append 'rc' and an incrementing number (e.g., 1.0.0-rc1)
             # Find the latest tag matching the current PACKAGE_VERSION + "-rc*"
-            LATEST_RC=$(git tag -l "${PACKAGE_VERSION}rc*" | sort -V | tail -n 1)
+            LATEST_RC=$(git tag -l "${PACKAGE_VERSION}-rc*" | sort -V | tail -n 1)
             if [[ -z "$LATEST_RC" ]]; then
               # If no existing rc tag, start with rc1
-              NEW_TAG="${PACKAGE_VERSION}rc1"
+              NEW_TAG="${PACKAGE_VERSION}-rc1"
             else
               # Extract the number from the latest rc tag and increment it
               RC_NUMBER=$(echo "$LATEST_RC" | grep -oE '[0-9]+$')
-              NEW_TAG="${PACKAGE_VERSION}rc$((RC_NUMBER + 1))"
+              NEW_TAG="${PACKAGE_VERSION}-rc$((RC_NUMBER + 1))"
             fi
             echo "Determined tag for 'release' branch: $NEW_TAG"
           elif [[ "$CURRENT_BRANCH" == "main" ]]; then
