@@ -37,7 +37,6 @@ jobs:
         run: |
           # Read the base version from pyproject.toml (e.g., '1.0.0')
           VERSION=$(uv version --short)
-          #$(python -c "import toml; print(toml.load('pyproject.toml')['tool']['poetry']['version'])")
           # Set the output for this step. Use GITHUB_OUTPUT for step outputs.
           # The key 'package_version' here will be accessible as steps.get_version.outputs.package_version
           echo "package_version=$VERSION" >> "$GITHUB_OUTPUT"
@@ -67,8 +66,8 @@ jobs:
           echo "Using PACKAGE_VERSION: $PACKAGE_VERSION"
 
           if [[ "$CURRENT_BRANCH" == "dev" ]]; then
-            # Logic for 'dev' branch: append 'dev' and an incrementing number (e.g., 1.0.0dev1)
-            # Find the latest tag matching the current PACKAGE_VERSION + "dev*"
+            # Logic for 'dev' branch: append 'dev' and an incrementing number (e.g., 1.0.0-dev1)
+            # Find the latest tag matching the current PACKAGE_VERSION + "-dev*"
             LATEST_DEV=$(git tag -l "${PACKAGE_VERSION}dev*" | sort -V | tail -n 1)
             if [[ -z "$LATEST_DEV" ]]; then
               # If no existing dev tag, start with dev1
@@ -80,8 +79,8 @@ jobs:
             fi
             echo "Determined tag for 'dev' branch: $NEW_TAG"
           elif [[ "$CURRENT_BRANCH" == "release" ]]; then
-            # Logic for 'release' branch: append 'rc' and an incrementing number (e.g., 1.0.0rc1)
-            # Find the latest tag matching the current PACKAGE_VERSION + "rc*"
+            # Logic for 'release' branch: append 'rc' and an incrementing number (e.g., 1.0.0-rc1)
+            # Find the latest tag matching the current PACKAGE_VERSION + "-rc*"
             LATEST_RC=$(git tag -l "${PACKAGE_VERSION}rc*" | sort -V | tail -n 1)
             if [[ -z "$LATEST_RC" ]]; then
               # If no existing rc tag, start with rc1
