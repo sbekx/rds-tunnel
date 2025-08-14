@@ -63,7 +63,8 @@ To run `rds-tunnel` locally, follow these steps:
 The `rds-tunnel` tool looks for configuration in the following order:
 
 1.  **`config.json` file**: A `config.json` file in the same directory as `tunnel.py`.
-    - This will be located at `/Users/USER/.pyenv/versions/X.X.X/lib/pythonX.X/site-packages/rds_tunnel/config.json` or somewhere similar.
+    - This will be located at `~/.rdstunnel_config.json` 
+    - The package will store and use it here
 2.  **Environment Variables**: System environment variables.
 3.  **AWS Secrets Manager**: If the above are insufficient, it attempts to fetch secrets from AWS Secrets Manager using the secret name `tool/rds-tunnel-staging` and region `us-east-1` (these can be overridden if provided in `config.json` or environment variables). 
     - If relying on the Secrets Manager appoach to set the config, ensure you have created the AWS Secret and your local AWS CLI is configured to access the same AWS account.
