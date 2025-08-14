@@ -24,19 +24,20 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9' # Using Python 3.9 as specified in your original workflow
+          python-version: '3.13'
 
       - name: Install dependencies
         run: |
           # Upgrade pip and install the 'toml' library to read pyproject.toml
-          python -m pip install --upgrade pip
-          pip install toml
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Extract version from pyproject.toml
         id: get_version # This step needs an ID to reference its outputs
         run: |
           # Read the base version from pyproject.toml (e.g., '1.0.0')
-          VERSION=$(python -c "import toml; print(toml.load('pyproject.toml')['tool']['poetry']['version'])")
+          VERSION=$(uv version)
+          #$(python -c "import toml; print(toml.load('pyproject.toml')['tool']['poetry']['version'])")
           # Set the output for this step. Use GITHUB_OUTPUT for step outputs.
           # The key 'package_version' here will be accessible as steps.get_version.outputs.package_version
           echo "package_version=$VERSION" >> "$GITHUB_OUTPUT"
