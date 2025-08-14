@@ -52,7 +52,16 @@ def load_env_and_secrets():
 	config = {}
 	aws_logger.info("❓Loading configuration")
 	keys = ['SSH_HOST', 'SSH_USER', 'SSH_PRIVATE_KEY_PATH', 'DB_HOST', 'DB_PORT', 'DB_USER', 'DB_PASSWORD', 'DB_NAME', 'LOCAL_PORT']
-	config_path = os.path.join(os.path.dirname(__file__), 'config.json')
+	# The primary config file is in the user's home directory.
+	# If it doesn't exist, we'll copy it from the local directory if available.
+	home_dir = os.path.expanduser("~")
+	config_path = os.path.join(home_dir, '.rdstunnel_config.json')
+	default_config_path = os.path.join(os.path.dirname(__file__), 'config.json')
+
+	if os.path.exists(default_config_path) and not os.path.exists(config_path):
+		aws_logger.info(f"Config file not found at {config_path}, copying from {default_config_path}")
+		with open(default_config_path, 'r') as f_in, open(config_path, 'w') as f_out:
+			f_out.write(f_in.read())
 
 	# Try to load config from file first
 	if os.path.exists(config_path):
