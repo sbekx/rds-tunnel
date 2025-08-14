@@ -1,6 +1,15 @@
 name: release
 
 on:
+<<<<<<< Updated upstream
+=======
+  # push:
+  #   branches:
+  #     - release # Trigger on pushes to the 'release' branch
+  #     - main    # Trigger on pushes to the 'main' branch
+
+  # This is not working.. 
+>>>>>>> Stashed changes
   push:
     tags:
       - "[0-9]+.[0-9]+.[0-9]+"         # Matches x.x.x (e.g., 1.0.0)
@@ -75,23 +84,20 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.12"
+          python-version: "3.13"
 
-      - name: Install Poetry
+      - name: Install uv
         run: |
-          curl -sSL https://install.python-poetry.org | python3 -
+          curl -LsSf https://astral.sh/uv/install.sh | sh
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: Set project version with Poetry
+      - name: Set project version with uv
         run: |
-          poetry version ${{ needs.details.outputs.new_version }}
-
-      - name: Install dependencies
-        run: poetry install --sync --no-interaction
+          uv version ${{ needs.details.outputs.new_version }}
 
       - name: Build source and wheel distribution
         run: |
-          poetry build
+          uv build
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3

@@ -112,4 +112,4 @@ jobs:
           fi
         env:
           # GITHUB_TOKEN is automatically provided and has permissions to create and push tags
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
