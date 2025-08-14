@@ -10,6 +10,8 @@ on:
 jobs:
   get_tag_version:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     # Define outputs for this job that can be consumed by other jobs
     outputs:
       package_version: ${{ steps.get_version.outputs.package_version }}
