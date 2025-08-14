@@ -1,0 +1,113 @@
+name: Auto Tag Versions
+
+on:
+  push:
+    branches:
+      - dev    # Trigger on pushes to the 'dev' branch
+      - release # Trigger on pushes to the 'release' branch
+      - main    # Trigger on pushes to the 'main' branch
+
+jobs:
+  get_tag_version:
+    runs-on: ubuntu-latest
+    # Define outputs for this job that can be consumed by other jobs
+    outputs:
+      package_version: ${{ steps.get_version.outputs.package_version }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Fetch all history for accurate tag lookup
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9' # Using Python 3.9 as specified in your original workflow
+
+      - name: Install dependencies
+        run: |
+          # Upgrade pip and install the 'toml' library to read pyproject.toml
+          python -m pip install --upgrade pip
+          pip install toml
+
+      - name: Extract version from pyproject.toml
+        id: get_version # This step needs an ID to reference its outputs
+        run: |
+          # Read the base version from pyproject.toml (e.g., '1.0.0')
+          VERSION=$(python -c "import toml; print(toml.load('pyproject.toml')['tool']['poetry']['version'])")
+          # Set the output for this step. Use GITHUB_OUTPUT for step outputs.
+          # The key 'package_version' here will be accessible as steps.get_version.outputs.package_version
+          echo "package_version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Current package version extracted from pyproject.toml: $VERSION"
+
+  gh_tag_version:
+    runs-on: ubuntu-latest
+    # This job now correctly depends on 'get_tag_version' to ensure it runs afterwards
+    needs: get_tag_version
+    steps:
+      - name: Checkout repository # Checkout again in this job as it's a new runner
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for tag operations
+
+      - name: Determine and push new tag
+        run: |
+          # Access the output from the 'get_tag_version' job using 'needs.<job_id>.outputs.<output_name>'
+          PACKAGE_VERSION=${{ needs.get_tag_version.outputs.package_version }}
+          # Get the current branch name (e.g., 'dev', 'release', 'main')
+          CURRENT_BRANCH=${GITHUB_REF##*/}
+          NEW_TAG=""
+
+          echo "Detected current branch: $CURRENT_BRANCH"
+          echo "Using PACKAGE_VERSION: $PACKAGE_VERSION"
+
+          if [[ "$CURRENT_BRANCH" == "dev" ]]; then
+            # Logic for 'dev' branch: append 'dev' and an incrementing number (e.g., 1.0.0dev1)
+            # Find the latest tag matching the current PACKAGE_VERSION + "dev*"
+            LATEST_DEV=$(git tag -l "${PACKAGE_VERSION}dev*" | sort -V | tail -n 1)
+            if [[ -z "$LATEST_DEV" ]]; then
+              # If no existing dev tag, start with dev1
+              NEW_TAG="${PACKAGE_VERSION}dev1"
+            else
+              # Extract the number from the latest dev tag and increment it
+              DEV_NUMBER=$(echo "$LATEST_DEV" | grep -oE '[0-9]+$')
+              NEW_TAG="${PACKAGE_VERSION}dev$((DEV_NUMBER + 1))"
+            fi
+            echo "Determined tag for 'dev' branch: $NEW_TAG"
+          elif [[ "$CURRENT_BRANCH" == "release" ]]; then
+            # Logic for 'release' branch: append 'rc' and an incrementing number (e.g., 1.0.0rc1)
+            # Find the latest tag matching the current PACKAGE_VERSION + "rc*"
+            LATEST_RC=$(git tag -l "${PACKAGE_VERSION}rc*" | sort -V | tail -n 1)
+            if [[ -z "$LATEST_RC" ]]; then
+              # If no existing rc tag, start with rc1
+              NEW_TAG="${PACKAGE_VERSION}rc1"
+            else
+              # Extract the number from the latest rc tag and increment it
+              RC_NUMBER=$(echo "$LATEST_RC" | grep -oE '[0-9]+$')
+              NEW_TAG="${PACKAGE_VERSION}rc$((RC_NUMBER + 1))"
+            fi
+            echo "Determined tag for 'release' branch: $NEW_TAG"
+          elif [[ "$CURRENT_BRANCH" == "main" ]]; then
+            # Logic for 'main' branch: use the exact version from pyproject.toml (e.g., 1.0.0)
+            NEW_TAG="$PACKAGE_VERSION"
+            echo "Determined tag for 'main' branch: $NEW_TAG"
+          else
+            # If the push is to a branch not explicitly handled, do nothing
+            echo "No specific tagging logic configured for branch: $CURRENT_BRANCH. Exiting gracefully."
+            exit 0 # Exit successfully without creating a tag
+          fi
+
+          # Check if the determined tag already exists
+          if git rev-parse -q --verify "refs/tags/$NEW_TAG" >/dev/null; then
+            echo "Tag '$NEW_TAG' already exists. Skipping tag creation and push to avoid duplicates."
+          else
+            # Create and push the new tag to the repository
+            echo "Creating and pushing new tag: '$NEW_TAG'"
+            git tag "$NEW_TAG"
+            git push origin "$NEW_TAG"
+          fi
+        env:
+          # GITHUB_TOKEN is automatically provided and has permissions to create and push tags
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
