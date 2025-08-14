@@ -40,6 +40,8 @@ logging.basicConfig(
 	format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
 	stream=sys.stdout
 )
+config_logger = logging.getLogger('config.loader')
+config_logger.setLevel(logging.INFO)
 aws_logger = logging.getLogger('aws.boto3')
 aws_logger.setLevel(logging.INFO)
 sshtunnel_logger = logging.getLogger('sshtunnel')
@@ -50,7 +52,7 @@ mysql_logger.setLevel(logging.DEBUG)
 def load_env_and_secrets():
 	"""Loads configuration from file, environment, or AWS Secrets Manager."""
 	config = {}
-	aws_logger.info("❓Loading configuration")
+	config_logger.info("❓Loading configuration")
 	keys = ['SSH_HOST', 'SSH_USER', 'SSH_PRIVATE_KEY_PATH', 'DB_HOST', 'DB_PORT', 'DB_USER', 'DB_PASSWORD', 'DB_NAME', 'LOCAL_PORT']
 	# The primary config file is in the user's home directory.
 	# If it doesn't exist, we'll copy it from the local directory if available.
@@ -59,16 +61,16 @@ def load_env_and_secrets():
 	default_config_path = os.path.join(os.path.dirname(__file__), 'config.json')
 
 	if os.path.exists(default_config_path) and not os.path.exists(config_path):
-		aws_logger.info(f"Config file not found at {config_path}, copying from {default_config_path}")
+		config_logger.info(f"Config file not found at {config_path}, copying from {default_config_path}")
 		with open(default_config_path, 'r') as f_in, open(config_path, 'w') as f_out:
 			f_out.write(f_in.read())
 
 	# Try to load config from file first
 	if os.path.exists(config_path):
-		aws_logger.info(f"❓Loading config from {config_path}")
+		config_logger.info(f"❓Loading config from {config_path}")
 		with open(config_path, 'r') as f:
 			file_config = json.load(f)
-			aws_logger.debug(f"Current config: {file_config}")
+			config_logger.debug(f"Current config: {file_config}")
 		for key in keys:
 			config[key] = file_config.get(key)
 	else:
@@ -77,7 +79,7 @@ def load_env_and_secrets():
 			config[key] = os.getenv(key)
 
 	# If any required config missing, fetch from AWS Secrets Manager
-	aws_logger.debug(f"Config: {config}")
+	config_logger.debug(f"Config: {config}")
 	if not all(config.get(var) for var in keys):
 		aws_logger.info("❓Config missing, fetching from Secrets Manager...")
 		secret_name = config.get('SECRETS_MANAGER_SECRET_NAME', 'tool/rds-tunnel-staging')
@@ -93,6 +95,7 @@ def load_env_and_secrets():
 			# Save config to file for future use
 			with open(config_path, 'w') as f:
 				json.dump({k: config[k] for k in keys}, f, indent=2)
+				aws_logger.info("Getting missing keys from Secrets Manager")
 		else:
 			aws_logger.warning("❌ SECRETS_MANAGER_SECRET_NAME not set in environment variables.")
 
@@ -100,7 +103,7 @@ def load_env_and_secrets():
 	config['DB_PORT'] = int(config.get('DB_PORT', 3306))
 	config['LOCAL_PORT'] = int(config.get('LOCAL_PORT', 3306))
 
-	aws_logger.info(f"Config Loaded: {config}")
+	config_logger.info(f"Config Loaded: {config}")
 	return config
 
 def run_tunnel(config):
