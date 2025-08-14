@@ -11,7 +11,7 @@ on:
 env:
   PACKAGE_NAME: "rds-tunnel"
   OWNER: "sbekx"
-  # TAP_NAME: "<TAP_NAME>"
+  # TAP_NAME: "<TAP_NAME>" 
 
 jobs:
   details:
