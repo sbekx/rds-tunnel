@@ -4,7 +4,7 @@ include-package-data = true
 
 [project]
 name = "rds-tunnel"
-version = "1.0.0"
+version = "1.0.1"
 description = "Simple SSH Tunnel tool for connecting to RDS. Supports MySQL and PostgreSQL."
 authors = [
     { name = "Sebastian Bekx", email = "sbekx@cameramatics.com" },
