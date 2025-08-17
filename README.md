@@ -8,6 +8,19 @@
 
 A simple command-line interface (CLI) tool designed to establish and manage SSH tunnels to Amazon RDS (Relational Database Service) instances. This tool runs as a background daemon, allowing you to set up a secure connection and leave it running.
 
+## Project Background
+This tool was created to provide a free and open-source solution to a common developer workflow: securely connecting local applications to a database inside a private network.
+
+While many excellent database extensions exist for editors like VSCode, they sometimes require a premium subscription to share the tunnel connection both inside and outside the editor, rds-tunnel offers a different approach. By running as a standalone background process, it creates a single, persistent tunnel that any application on your system—your IDE, database GUI, or scripts—can use simultaneously.
+ 
+The primary motivation behind this tool was the desire to seamlessly test Lambda functions locally against various database environments, from development to production. Initially, this involved manually executing a lengthy SSH command:
+```bash
+ssh -N -L 3306:RDS-DATABASE.cluster-********.us-east-1.rds.amazonaws.com:3306 ec2-user@EC2_HOST_IP_OR_PUBLIC_DNS -i /PATH/TO/KEY.pem
+```
+
+After this it became a simple script that I ran as an alias via my .zshrc. This then evolved as my development itch took hold and it became v0.1.0 a simple python script which takes a couple of arguments to start/stop the tunnel. 
+
+Now the CLI tool starts/stops the tunnel and runs in the background, it allows any code I run to interact with the DB over the ssh tunnel that's bound to my local. 
 ***
 
 ## ✨ Features
