@@ -52,26 +52,42 @@ jobs:
     needs: details
     runs-on: ubuntu-latest
     steps:
-      - name: Fetch information from PyPI
+      - name: Fetch information from PyPI and validate version
+        env:
+          TAG_NAME: ${{ needs.details.outputs.tag_name }}
+          PACKAGE_NAME: ${{ env.PACKAGE_NAME }}
         run: |
-          response=$(curl -s https://pypi.org/pypi/${{ env.PACKAGE_NAME }}/json || echo "{}")
-          latest_previous_version=$(echo $response | jq --raw-output "select(.releases != null) | .releases | keys_unsorted | last")
-          if [ -z "$latest_previous_version" ]; then
-            echo "Package not found on PyPI."
-            latest_previous_version="0.0.0"
-          fi
-          echo "Latest version on PyPI: $latest_previous_version"
-          echo "latest_previous_version=$latest_previous_version" >> $GITHUB_ENV
+          # Get the full version from the tag
+          FULL_VERSION="$TAG_NAME"
+          
+          # Check if the tag is a release candidate
+          if [[ "$FULL_VERSION" == *"-rc"* ]]; then
+            # Extract the base version (e.g., 1.0.0 from 1.0.0-rc1)
+            BASE_VERSION=$(echo "$FULL_VERSION" | awk -F'-' '{print $1}')
+            echo "This is a release candidate: $FULL_VERSION"
+            echo "Checking for final version: $BASE_VERSION on PyPI"
 
-      - name: Compare versions and exit if not newer
-        run: |
-          NEW_VERSION=${{ needs.details.outputs.new_version }}
-          LATEST_VERSION=$latest_previous_version
-          if [ "$(printf '%s\n' "$LATEST_VERSION" "$NEW_VERSION" | sort -rV | head -n 1)" != "$NEW_VERSION" ] || [ "$NEW_VERSION" == "$LATEST_VERSION" ]; then
-            echo "The new version $NEW_VERSION is not greater than the latest version $LATEST_VERSION on PyPI."
-            exit 1
+            # Check if the base version already exists on PyPI
+            response=$(curl -s https://pypi.org/pypi/$PACKAGE_NAME/$BASE_VERSION/json || echo "{}")
+            if [ "$(echo "$response" | jq --raw-output "select(.info != null) | .info.version")" == "$BASE_VERSION" ]; then
+              echo "Error: A final release for $BASE_VERSION already exists on PyPI."
+              echo "Cannot publish a release candidate ($FULL_VERSION) after the final release."
+              exit 1
+            else
+              echo "No final release found for $BASE_VERSION. Proceeding with RC upload."
+            fi
           else
-            echo "The new version $NEW_VERSION is greater than the latest version $LATEST_VERSION on PyPI."
+            echo "This is a final release: $FULL_VERSION"
+            echo "Proceeding with standard version check and upload."
+            
+            # This is your original version comparison for final releases
+            response=$(curl -s https://pypi.org/pypi/$PACKAGE_NAME/json || echo "{}")
+            LATEST_PYPI_VERSION=$(echo $response | jq --raw-output "select(.info != null) | .info.version")
+            
+            if [ -z "$LATEST_PYPI_VERSION" ] || [ "$(printf '%s\n' "$LATEST_PYPI_VERSION" "$FULL_VERSION" | sort -V | head -n 1)" != "$FULL_VERSION" ]; then
+              echo "Error: The new version '$FULL_VERSION' is not a new version on PyPI."
+              exit 1
+            fi
           fi
 
   setup_and_build:
