@@ -3,7 +3,7 @@ name: Auto Tag Versions
 on:
   push:
     branches:
-      - dev    # Trigger on pushes to the 'dev' branch
+      # - dev    # Trigger on pushes to the 'dev' branch
       - release # Trigger on pushes to the 'release' branch
       - main    # Trigger on pushes to the 'main' branch
   workflow_dispatch: # Allow manual triggering of the workflow
