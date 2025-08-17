@@ -108,7 +108,7 @@ jobs:
 
       - name: Set project version with uv
         run: |
-          uv version ${{ needs.details.outputs.new_version }}
+          uv version ${{ needs.details.outputs.tag_name }}
 
       - name: Build source and wheel distribution
         run: |
