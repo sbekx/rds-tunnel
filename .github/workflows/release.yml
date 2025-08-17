@@ -91,7 +91,7 @@ jobs:
           fi
 
   setup_and_build:
-    needs: [details, check_pypi]A
+    needs: [details, check_pypi]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
