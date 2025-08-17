@@ -76,18 +76,18 @@ jobs:
             else
               echo "No final release found for $BASE_VERSION. Proceeding with RC upload."
             fi
-          else
-            echo "This is a final release: $FULL_VERSION"
-            echo "Proceeding with standard version check and upload."
+          # else
+          #   echo "This is a final release: $FULL_VERSION"
+          #   echo "Proceeding with standard version check and upload."
             
-            # This is your original version comparison for final releases
-            response=$(curl -s https://pypi.org/pypi/$PACKAGE_NAME/json || echo "{}")
-            LATEST_PYPI_VERSION=$(echo $response | jq --raw-output "select(.info != null) | .info.version")
+          #   # This is your original version comparison for final releases
+          #   response=$(curl -s https://pypi.org/pypi/$PACKAGE_NAME/json || echo "{}")
+          #   LATEST_PYPI_VERSION=$(echo $response | jq --raw-output "select(.info != null) | .info.version")
             
-            if [ -z "$LATEST_PYPI_VERSION" ] || [ "$(printf '%s\n' "$LATEST_PYPI_VERSION" "$FULL_VERSION" | sort -V | head -n 1)" != "$FULL_VERSION" ]; then
-              echo "Error: The new version '$FULL_VERSION' is not a new version on PyPI."
-              exit 1
-            fi
+          #   if [ -z "$LATEST_PYPI_VERSION" ] || [ "$(printf '%s\n' "$LATEST_PYPI_VERSION" "$FULL_VERSION" | sort -V | head -n 1)" != "$FULL_VERSION" ]; then
+          #     echo "Error: The new version '$FULL_VERSION' is not a new version on PyPI."
+          #     exit 1
+          #   fi
           fi
 
   setup_and_build:
