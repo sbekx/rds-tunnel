@@ -13,7 +13,9 @@ This tool was created to provide a free and open-source solution to a common dev
 
 While many excellent database extensions exist for editors like VSCode, they sometimes require a premium subscription to share the tunnel connection both inside and outside the editor, rds-tunnel offers a different approach. By running as a standalone background process, it creates a single, persistent tunnel that any application on your system—your IDE, database GUI, or scripts—can use simultaneously.
  
-The primary motivation behind this tool was the desire to seamlessly test Lambda functions locally against various database environments, from development to production. Initially, this involved manually executing a lengthy SSH command:
+The primary motivation behind this tool was the desire to seamlessly test Lambda functions locally against various database environments, from development to production. 
+
+Initially, this involved manually executing and maintaining a lengthy SSH command:
 ```bash
 ssh -N -L 3306:RDS-DATABASE.cluster-********.us-east-1.rds.amazonaws.com:3306 ec2-user@EC2_HOST_IP_OR_PUBLIC_DNS -i /PATH/TO/KEY.pem
 ```
