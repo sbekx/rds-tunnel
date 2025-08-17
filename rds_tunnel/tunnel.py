@@ -182,6 +182,8 @@ def main():
 
 
 def cli():
+	print("\nDEPRECATION NOTICE\nCommand: 'rds-tunnel' is deprecated and will be removed in a future version.\nIt has been replaced by 'rdst'.\n\n")
+
 	parser = argparse.ArgumentParser(description="RDS Tunnel CLI")
 	parser.add_argument('--staging', action='store_true', help='Run staging tunnel')
 	parser.add_argument('--production', action='store_true', help='Run production tunnel (not implemented)')
