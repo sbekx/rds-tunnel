@@ -24,12 +24,13 @@ A simple command-line interface (CLI) tool designed to establish and manage SSH 
     *   `rds-tunnel help`
 
 ### Supported OS
+I have tried to keep the tool as OS agnostic as possible, however 🤷🏼‍♂️ still applies to everything other Mac.
 |                                                                                                                | Name                 | Status |
 | -------------------------------------------------------------------------------------------------------------------- | -------------------- | ------ |
 | ![](https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/24x24/MAC.png "MAC (24x24)") | Mac                  | ✅     |
 | ![](https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/24x24/RAS.png "RAS (24x24)") | Raspberry Pi         | 🤷🏼‍♂️     |
 | ![](https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/24x24/UBT.png "UBT (24x24)") | Ubuntu               | 🤷🏼‍♂️     |
-| ![](https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/24x24/WIN.png "WIN (24x24))") | Windows              | ❌    |
+| ![](https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/24x24/WIN.png "WIN (24x24))") | Windows              | 🤷🏼‍♂️    |
 
 ***
 
