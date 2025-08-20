@@ -139,10 +139,10 @@ You can also specify a custom configuration file for advanced use cases:
 rdst start --config-file /path/to/another_config.json
 ```
 
-### `rds-tunnel stop`
+### `rdst stop`
 Finds the running daemon process and sends a signal to gracefully shut it down.
 ```bash
-rds-tunnel stop
+rdst stop
 ```
 
 ### `rdst status`
