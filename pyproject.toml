@@ -7,7 +7,7 @@ name = "rds-tunnel"
 version = "1.0.2"
 description = "Simple SSH Tunnel tool for connecting to RDS. Supports MySQL and PostgreSQL."
 authors = [
-    { name = "Sebastian Bekx", email = "sbekx@cameramatics.com" },
+    { name = "Sebastian Bekx", email = "sbekx@psb.pw" },
 ]
 readme = "README.md"
 requires-python = ">=3.9"
