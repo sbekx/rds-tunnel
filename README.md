@@ -32,11 +32,11 @@ Now the CLI tool starts/stops the tunnel and runs in the background, it allows a
 *   **Simple JSON Configuration**: Uses a straightforward JSON file (`~/.rdstunnel_config.json`) for all settings.
 *   **Interactive Configuration**: Interactively fetch credentials from AWS Secrets Manager to set up your configuration file.
 *   **Full CLI Control**: Manage the tunnel with a clear and simple command structure:
-    *   `rds-tunnel start`
-    *   `rds-tunnel stop`
-    *   `rds-tunnel status`
-    *   `rds-tunnel config`
-    *   `rds-tunnel help`
+    *   `rdst start`
+    *   `rdst stop`
+    *   `rdst status`
+    *   `rdst config`
+    *   `rdst help`
 
 ### Supported OS
 I have tried to keep the tool as OS agnostic as possible, however 🤷🏼‍♂️ still applies to everything other Mac.
@@ -45,7 +45,7 @@ I have tried to keep the tool as OS agnostic as possible, however 🤷🏼‍♂
 | ![](https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/24x24/MAC.png "MAC (24x24)") | Mac                  | ✅     |
 | ![](https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/24x24/RAS.png "RAS (24x24)") | Raspberry Pi         | 🤷🏼‍♂️     |
 | ![](https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/24x24/UBT.png "UBT (24x24)") | Ubuntu               | 🤷🏼‍♂️     |
-| ![](https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/24x24/WIN.png "WIN (24x24))") | Windows              | 🤷🏼‍♂️    |
+| ![](https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/24x24/WIN.png "WIN (24x24)") | Windows              | 🤷🏼‍♂️     |
 
 ***
 
@@ -139,10 +139,10 @@ You can also specify a custom configuration file for advanced use cases:
 rdst start --config-file /path/to/another_config.json
 ```
 
-### `rds-tunnel stop`
+### `rdst stop`
 Finds the running daemon process and sends a signal to gracefully shut it down.
 ```bash
-rds-tunnel stop
+rdst stop
 ```
 
 ### `rdst status`

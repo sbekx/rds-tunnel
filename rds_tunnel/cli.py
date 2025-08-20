@@ -182,7 +182,7 @@ def cli():
 		
 		# Now use the daemonize() function to handle the forking
 		daemonize()
-		cli_logger.info("\nCheck tunnel status with:\n -$ rds-tunnel status")
+		cli_logger.info("\nCheck tunnel status with:\n -$ rdst status")
 		cli_logger.info("\nIf the tunnel is not active, check the logs.")
 		cli_logger.info(f"\nLogs being written to: {os.path.expanduser('~/.rdstunnel.log')}\nRun:\n -$ tail -f ~/.rdstunnel.log")
 		# The following code only runs in the daemon process
