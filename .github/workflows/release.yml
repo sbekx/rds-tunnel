@@ -76,6 +76,8 @@ jobs:
             else
               echo "No final release found for $BASE_VERSION. Proceeding with RC upload."
             fi
+          
+          # TODO Refactor this so that it allows for rc versions to publish but doesn't block full verison (non RC)
           # else
           #   echo "This is a final release: $FULL_VERSION"
           #   echo "Proceeding with standard version check and upload."
