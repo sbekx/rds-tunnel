@@ -50,10 +50,33 @@ I have tried to keep the tool as OS agnostic as possible, however 🤷🏼‍♂
 ***
 
 ## 🛠️ Installation
-### Recommended
+### Recommended PyPi
 ```bash
 pip install rds-tunnel
 ```
+### Homebrew
+To install rds-tunnel using Homebrew, follow these two simple steps:
+
+#### 1. Tap the Repository
+First, you need to "tap" this Homebrew repository. This tells Homebrew where to find the rds-tunnel formula.
+```shell
+brew tap sbekx/rds-tunnel
+```
+
+#### 2. Install `rds-tunnel`
+Once the tap is added, you can install the rds-tunnel package:
+```shell
+brew install rds-tunnel
+```
+
+#### 3. (Potentially) Run `brew link`
+You might see a message like "The formula built, but is not symlinked into /opt/homebrew", if so, run:
+```shell
+brew link --overwrite rds-tunnel
+```
+
+Homebrew will handle all the necessary dependencies and set up rds-tunnel in an isolated environment.
+
 ### (Optional) Build it Locally
 To run `rds-tunnel` locally, follow these steps:
 
