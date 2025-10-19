@@ -27,9 +27,10 @@ Now the CLI tool starts/stops the tunnel and runs in the background, it allows a
 
 ## ✨ Features
 
+*   **Secure Tunneling via SSM Sessions**: Establishes a secure tunnel through an SSM Session using the SSM plugin for the AWS CLI.
 *   **Secure SSH Tunneling**: Establishes a secure tunnel through an SSH bastion host to your RDS instance.
 *   **Daemonized Process**: Runs the SSH tunnel in a separate background process, allowing you to start it and forget it.
-*   **Simple JSON Configuration**: Uses a straightforward JSON file (`~/.rdstunnel_config.json`) for all settings.
+*   **Simple JSON Configuration**: Uses a straightforward JSON file (`~/.rdst/tunnel_config.json`) for all settings.
 *   **Interactive Configuration**: Interactively fetch credentials from AWS Secrets Manager to set up your configuration file.
 *   **Full CLI Control**: Manage the tunnel with a clear and simple command structure:
     *   `rdst start`
@@ -43,11 +44,21 @@ I have tried to keep the tool as OS agnostic as possible, however 🤷🏼‍♂
 |                                                                                                                | Name                 | Status |
 | -------------------------------------------------------------------------------------------------------------------- | -------------------- | ------ |
 | ![](https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/24x24/MAC.png "MAC (24x24)") | Mac                  | ✅     |
-| ![](https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/24x24/RAS.png "RAS (24x24)") | Raspberry Pi         | 🤷🏼‍♂️     |
-| ![](https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/24x24/UBT.png "UBT (24x24)") | Ubuntu               | 🤷🏼‍♂️     |
+| ![](https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/24x24/RAS.png "RAS (24x24)") | Raspberry Pi         | ✅      |
+| ![](https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/24x24/UBT.png "UBT (24x24)") | Ubuntu               | ✅      |
 | ![](https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/24x24/WIN.png "WIN (24x24)") | Windows              | 🤷🏼‍♂️     |
 
 ***
+
+## 🛒 Pre-requisites
+### For SSH Usage
+- Ensure port 22 is accessible
+### For SSM Usage
+1. Ensure your EC2 instance role has the managed policy `AmazonSSMManagedInstanceCore` attached
+2. Install the [SSM-Agent](https://docs.aws.amazon.com/systems-manager/latest/userguide/manually-install-ssm-agent-linux.html) on your instance
+3. Restart the service, in some cases it may need an instance reboot.
+4. Install the [Session Manager plugin for the AWS CLI](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html)
+
 
 ## 🛠️ Installation
 ### Recommended PyPi
@@ -103,7 +114,7 @@ To run `rds-tunnel` locally, follow these steps:
 
 ## ⚙️ Configuration
 
-The `rds-tunnel` tool uses a single configuration file located at `~/.rdstunnel_config.json`.
+The `rds-tunnel` tool uses a single configuration file located at `~/.rdst/tunnel_config.json`.
 
 On the first run, the tool will automatically create this file for you from a default template. You can then manage it using the `rdst config` command.
 
@@ -112,7 +123,7 @@ On the first run, the tool will automatically create this file for you from a de
 This is the primary way to manage your settings.
 
 *   **Fetch config from AWS:**
-    This command will interactively prompt you for an AWS Secrets Manager secret name and region. It will then fetch the secrets and save them to your `~/.rdstunnel_config.json` file.
+    This command will interactively prompt you for an AWS Secrets Manager secret name and region. It will then fetch the secrets and save them to your `~/.rdst/tunnel_config.json` file.
     ```bash
     rdst config --fetch
     ```
@@ -123,7 +134,7 @@ This is the primary way to manage your settings.
     ```
 
 *   **Reset the config:**
-    This will reset your `~/.rdstunnel_config.json` back to the original default values.
+    This will reset your `~/.rdst/tunnel_config.json` back to the original default values.
     ```bash
     rdst config --clean
     ```
@@ -141,7 +152,10 @@ Your configuration file will need the following keys:
   "DB_USER": "your-db-username",
   "DB_PASSWORD": "your-db-password",
   "DB_NAME": "your-database-name",
-  "LOCAL_PORT": 3306
+  "LOCAL_PORT": 3306,
+  "INSTANCE_ID": "i-XXXXXXXXXX",
+  "AWS_REGION": "us-east-1", # Set region
+  "AWS_PROFILE": "default" # Set profile for different environments
 }
 ```
 
@@ -151,16 +165,17 @@ Your configuration file will need the following keys:
 ## 🚀 Usage
 
 ### `rdst start`
-Starts the SSH tunnel as a background daemon process. It will use the configuration from `~/.rdstunnel_config.json` by default.
+Starts the SSH tunnel as a background daemon process. It will use the configuration from `~/.rdst/tunnel_config.json` by default.
 ```bash
 rdst start
 ```
-After starting, the daemon's logs will be written to `~/.rdstunnel.log`.
+After starting, the daemon's logs will be written to `~/.rdst/tunnel.log`.
 
 You can also specify a custom configuration file for advanced use cases:
 ```bash
 rdst start --config-file /path/to/another_config.json
 ```
+*By default all configs, logs, are stored in ~/.rdst/
 
 ### `rdst stop`
 Finds the running daemon process and sends a signal to gracefully shut it down.
