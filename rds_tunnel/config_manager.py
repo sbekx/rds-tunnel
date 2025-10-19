@@ -1,6 +1,7 @@
-import os
 import json
 import logging
+import os
+
 import boto3
 
 config_logger = logging.getLogger('config.loader')
@@ -15,12 +16,17 @@ class ConfigManager:
 		"""Resolves the path to the user configuration file."""
 		if config_path:
 			return config_path
-		return os.path.join(os.path.expanduser("~"), '.rdstunnel_config.json')
+		return os.path.join(os.path.expanduser("~"), '.rdst/tunnel_config.json')
 
 	def load_config(self):
 		"""Loads configuration from the JSON file."""
 		config = {}
-		keys = ['SSH_HOST', 'SSH_USER', 'SSH_PRIVATE_KEY_PATH', 'DB_HOST', 'DB_PORT', 'DB_USER', 'DB_PASSWORD', 'DB_NAME', 'LOCAL_PORT']
+		# Include INSTANCE_ID/AWS_PROFILE/AWS_REGION so callers can trigger SSM port-forwarding
+		keys = [
+			'SSH_HOST', 'SSH_USER', 'SSH_PRIVATE_KEY_PATH',
+			'DB_HOST', 'DB_PORT', 'DB_USER', 'DB_PASSWORD', 'DB_NAME', 'LOCAL_PORT',
+			'INSTANCE_ID', 'AWS_PROFILE', 'AWS_REGION', 'SECRETS_MANAGER_SECRET_NAME'
+		]
 
 		if not os.path.exists(self.config_path):
 			config_logger.warning(f"Config file not found at {self.config_path}")
@@ -36,6 +42,9 @@ class ConfigManager:
 		# Set defaults for ports
 		config['DB_PORT'] = int(config.get('DB_PORT', 3306))
 		config['LOCAL_PORT'] = int(config.get('LOCAL_PORT', 3306))
+
+		# Ensure AWS region default
+		config['AWS_REGION'] = config.get('AWS_REGION', 'us-east-1')
 
 		# Mask password for logging
 		log_config = config.copy()
@@ -76,3 +85,15 @@ class ConfigManager:
 			print(f"Configuration reset to default using {default_config_path}")
 		else:
 			config_logger.error(f"Default configuration file not found at {default_config_path}")
+
+	def boto_session_from_config(self):
+		"""Return a boto3.Session using AWS_PROFILE and AWS_REGION from the file if available."""
+		cfg = {}
+		if os.path.exists(self.config_path):
+			with open(self.config_path, 'r') as f:
+				cfg = json.load(f)
+		profile = cfg.get('AWS_PROFILE', 'default')
+		region = cfg.get('AWS_REGION', 'us-east-1')
+		if profile:
+			return boto3.session.Session(profile_name=profile, region_name=region)
+		return boto3.session.Session(region_name=region)
