@@ -13,10 +13,23 @@ class ConfigManager:
 		self.config_path = self._resolve_config_path(config_path)
 
 	def _resolve_config_path(self, config_path):
-		"""Resolves the path to the user configuration file."""
-		if config_path:
-			return config_path
-		return os.path.join(os.path.expanduser("~"), '.rdst/tunnel_config.json')
+		"""Resolves the path to the user configuration file. Ensures ~/.rdst/ exists and the file is created."""
+		rdst_dir = os.path.join(os.path.expanduser("~"), '.rdst')
+
+		# Always keep config files under ~/.rdst/; use the basename of any provided path
+		filename = os.path.basename(config_path) if config_path else 'tunnel_config.json'
+		path = os.path.join(rdst_dir, filename)
+
+		# Create an empty JSON config file if it doesn't exist
+		if not os.path.exists(path):
+			try:
+				with open(path, 'w') as f:
+					f.write('{}\n')
+			except Exception as e:
+				config_logger.error(f"Failed to create config file {path}: {e}")
+				raise
+
+		return path
 
 	def load_config(self):
 		"""Loads configuration from the JSON file."""

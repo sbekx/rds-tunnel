@@ -60,6 +60,14 @@ def setup_logging(debug=False):
 	# at the top level. The handlers will handle the specific filtering.
 	root_logger.setLevel(logging.DEBUG)
 
+	# Ensure the directory exists for logs and configs
+	rdst_dir = os.path.join(os.path.expanduser("~"), '.rdst')
+	try:
+		os.makedirs(rdst_dir, exist_ok=True)
+	except Exception as e:
+		config_logger.error(f"Failed to create config directory {rdst_dir}: {e}")
+		raise
+
 	# 4. Create and configure the FileHandler (always active)
 	log_file_path = os.path.expanduser("~/.rdst/tunnel.log")
 	collector(log_file_path=log_file_path)
