@@ -9,5 +9,7 @@
   "DB_NAME": "",
   "LOCAL_PORT": 3306,
   "SECRETS_MANAGER_SECRET_NAME": "tool/rds-tunnel-staging",
-  "AWS_REGION": "us-east-1"
+  "AWS_REGION": "us-east-1",
+  "INSTANCE_ID": "",
+  "AWS_PROFILE": ""
 }
